@@ -111,22 +111,11 @@ open class TeaVMTask : DefaultTask() {
     private fun prepareClassLoader(): URLClassLoader {
         try {
             val urls = ArrayList<URL>()
-            val classpath = StringBuilder()
             for (file in project.configurations.getByName("runtime").files) {
-                if (classpath.length > 0) {
-                    classpath.append(':')
-                }
-                classpath.append(file.path)
                 urls.add(file.toURI().toURL())
             }
 
-            if (classpath.length > 0) {
-                classpath.append(':')
-            }
-            classpath.append(File(project.buildDir, "classes/main").path)
             urls.add(File(project.buildDir, "classes/main").toURI().toURL())
-            classpath.append(':')
-            classpath.append(File(project.buildDir, "resources/main").path)
             urls.add(File(project.buildDir, "resources/main").toURI().toURL())
 
             return URLClassLoader(urls.toArray<URL>(arrayOfNulls<URL>(urls.size)), javaClass.classLoader)
