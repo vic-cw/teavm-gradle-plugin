@@ -18,6 +18,7 @@ package com.edibleday
 
 import org.apache.maven.plugin.MojoExecutionException
 import org.gradle.api.DefaultTask
+import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskAction
@@ -42,6 +43,7 @@ open class TeaVMTask : DefaultTask() {
     var minified: Boolean = true
     var runtime: RuntimeCopyOperation = RuntimeCopyOperation.SEPARATE
 
+    val gradleLog = Logging.getLogger(TeaVMTask::class.java)
     val log by lazy { TeaVMLoggerGlue(project.logger) }
 
     @TaskAction fun compTeaVM() {
@@ -110,19 +112,17 @@ open class TeaVMTask : DefaultTask() {
 
     private fun prepareClassLoader(): URLClassLoader {
         try {
-            val urls = ArrayList<URL>()
-            for (file in project.configurations.getByName("runtime").files) {
-                urls.add(file.toURI().toURL())
+            val urls = project.configurations.getByName("runtime").run {
+                val dependencies = files.map { it.toURI().toURL() }
+                val artifacts = allArtifacts.files.map { it.toURI().toURL() }
+                dependencies + artifacts
             }
+            gradleLog.info("Using classpath URLs: {}", urls)
 
-            urls.add(File(project.buildDir, "classes/main").toURI().toURL())
-            urls.add(File(project.buildDir, "resources/main").toURI().toURL())
-
-            return URLClassLoader(urls.toArray<URL>(arrayOfNulls<URL>(urls.size)), javaClass.classLoader)
+            return URLClassLoader(urls.toTypedArray(), javaClass.classLoader)
         } catch (e: MalformedURLException) {
             throw MojoExecutionException("Error gathering classpath information", e)
         }
-
     }
 
 
