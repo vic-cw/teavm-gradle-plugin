@@ -29,9 +29,7 @@ import org.teavm.tooling.sources.JarSourceFileProvider
 import java.io.File
 import java.io.IOException
 import java.net.MalformedURLException
-import java.net.URL
 import java.net.URLClassLoader
-import java.util.*
 
 open class TeaVMTask : DefaultTask() {
 
@@ -59,7 +57,7 @@ open class TeaVMTask : DefaultTask() {
         } else throw TeaVMException("mainClassName not found!")
 
 
-        val addSrc = { f: File, tool: TeaVMTool ->
+        fun addSrc(f: File) {
             if (f.isFile) {
                 if (f.absolutePath.endsWith(".jar")) {
                     tool.addSourceFileProvider(JarSourceFileProvider(f))
@@ -79,13 +77,13 @@ open class TeaVMTask : DefaultTask() {
                 .sourceSets
                 .getByName(SourceSet.MAIN_SOURCE_SET_NAME)
                 .allSource
-                .srcDirs.forEach { addSrc(it, tool) }
+                .srcDirs.forEach(::addSrc)
 
         project
                 .configurations
                 .getByName("teavmsources")
                 .files
-                .forEach { addSrc(it, tool) }
+                .forEach(::addSrc)
 
         val cacheDirectory = File(project.buildDir, "teavm-cache")
         cacheDirectory.mkdirs()
