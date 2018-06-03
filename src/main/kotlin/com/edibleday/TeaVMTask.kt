@@ -16,8 +16,8 @@
 
 package com.edibleday
 
-import org.apache.maven.plugin.MojoExecutionException
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
@@ -121,7 +121,7 @@ open class TeaVMTask : DefaultTask() {
 
             return URLClassLoader(urls.toTypedArray(), javaClass.classLoader)
         } catch (e: MalformedURLException) {
-            throw MojoExecutionException("Error gathering classpath information", e)
+            throw GradleException("Error gathering classpath information", e)
         }
     }
 
