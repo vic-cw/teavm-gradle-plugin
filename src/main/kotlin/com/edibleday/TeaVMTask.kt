@@ -50,7 +50,6 @@ open class TeaVMTask : DefaultTask() {
 
         tool.targetDirectory = File(installDirectory)
         tool.targetFileName = targetFileName
-        tool.isMainPageIncluded = mainPageIncluded
 
         if (project.hasProperty("mainClassName") && project.property("mainClassName") != null) {
             tool.mainClass = "${project.property("mainClassName")}"

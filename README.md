@@ -51,8 +51,6 @@ teavmc { //Optional configuration block
     installDirectory "${project.buildDir}/teavm"
     /* Main javascript file name */
     targetFileName "app.js"
-    /* Include simple html file that can launch app */
-    mainPageIncluded true
     /* Copy sources to install directory for simpler debugging */
     copySources false
     /* Generate javascript to java mapping for debugging */
