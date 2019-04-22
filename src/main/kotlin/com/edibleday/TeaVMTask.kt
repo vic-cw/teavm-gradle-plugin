@@ -33,6 +33,7 @@ import java.net.URLClassLoader
 
 open class TeaVMTask : DefaultTask() {
 
+    var mainClass: String = ""
     var installDirectory: String = File(project.buildDir, "teavm").absolutePath
     var targetFileName: String = "app.js"
     var mainPageIncluded: Boolean = true
@@ -51,10 +52,11 @@ open class TeaVMTask : DefaultTask() {
         tool.targetDirectory = File(installDirectory)
         tool.targetFileName = targetFileName
 
-        if (project.hasProperty("mainClassName") && project.property("mainClassName") != null) {
-            tool.mainClass = "${project.property("mainClassName")}"
-        } else throw TeaVMException("mainClassName not found!")
-
+        if (mainClass != "") {
+            tool.mainClass = mainClass
+        } else {
+            throw TeaVMException("mainClass not specified!")
+        }
 
         fun addSrc(f: File) {
             if (f.isFile) {
@@ -112,7 +114,12 @@ open class TeaVMTask : DefaultTask() {
             val urls = project.configurations.getByName("runtime").run {
                 val dependencies = files.map { it.toURI().toURL() }
                 val artifacts = allArtifacts.files.map { it.toURI().toURL() }
-                dependencies + artifacts
+                val mainSourceSet = project.convention.getPlugin(JavaPluginConvention::class.java)
+                    .sourceSets
+                    .getByName(SourceSet.MAIN_SOURCE_SET_NAME)
+                val classesDir = mainSourceSet.java.outputDir.toURI().toURL()
+                val resourceDir = mainSourceSet.output.resourcesDir.toURI().toURL()
+                dependencies + artifacts + classesDir + resourceDir
             }
             gradleLog.info("Using classpath URLs: {}", urls)
 

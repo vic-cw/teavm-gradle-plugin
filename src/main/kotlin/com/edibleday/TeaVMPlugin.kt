@@ -29,10 +29,6 @@ class TeaVMPlugin : Plugin<Project> {
                 "plugin" to "java"
         ))
 
-        project.apply(mapOf(
-                "plugin" to "application"
-        ))
-
         project.configurations.create("teavmsources")
 
         project.dependencies.let {
@@ -48,7 +44,7 @@ class TeaVMPlugin : Plugin<Project> {
 
         project.task(mapOf(
                 Task.TASK_TYPE to TeaVMTask::class.java,
-                Task.TASK_DEPENDS_ON to "build",
+                Task.TASK_DEPENDS_ON to "classes",
                 Task.TASK_DESCRIPTION to "TeaVM Compile",
                 Task.TASK_GROUP to "build"
         ), "teavmc");
