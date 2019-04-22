@@ -39,14 +39,15 @@ repositories {
 }
 ```
 
-Set main class (one with `public static void main(String [] args)` method):
+Set compilation options:
 ```
-mainClassName = "my.package.Main"
-```
+teavmc {
+    // Required, specify class with `public static void main(String[] args)` method
 
-Optionally set compilation options:
-```
-teavmc { //Optional configuration block
+    mainClass = "my.package.Main"
+
+    //Optional configuration block
+
     /* Where to put final web app*/
     installDirectory "${project.buildDir}/teavm"
     /* Main javascript file name */
@@ -77,8 +78,6 @@ To run app, open `main.html` from `installDirectory`.
 
 Usage
 =====
-
-Sample is located [here](https://github.com/edibleday/teavm-gradle-plugin-sample). Check comments in `build.gradle` file.
 
 To compile javascript application, use `teavmc` task. By default output will be located in `build/teavm` directory.
 
