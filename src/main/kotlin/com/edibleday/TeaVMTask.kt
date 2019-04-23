@@ -20,6 +20,8 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskAction
 import org.teavm.tooling.RuntimeCopyOperation
@@ -45,6 +47,46 @@ open class TeaVMTask : DefaultTask() {
     val gradleLog = Logging.getLogger(TeaVMTask::class.java)
     val log by lazy { TeaVMLoggerGlue(project.logger) }
 
+    @get:OutputDirectory
+    protected val outputDir by lazy {
+        File(installDirectory)
+    }
+
+    @get:InputFiles
+    protected val inputFiles by lazy {
+        if (copySources) {
+            sourceFiles + jarsAndClassDirectories
+        }
+        else {
+            jarsAndClassDirectories
+        }
+    }
+
+    private val sourceFiles by lazy {
+        val convention = project.convention.getPlugin(JavaPluginConvention::class.java)
+        val sources = convention
+                .sourceSets
+                .getByName(SourceSet.MAIN_SOURCE_SET_NAME)
+                .allSource
+                .srcDirs
+        val teaVmSources = project
+                .configurations
+                .getByName("teavmsources")
+                .files
+        sources + teaVmSources
+    }
+
+    private val jarsAndClassDirectories by lazy {
+        project.configurations.getByName("runtime").run {
+            val mainSourceSet = project.convention.getPlugin(JavaPluginConvention::class.java)
+                .sourceSets
+                .getByName(SourceSet.MAIN_SOURCE_SET_NAME)
+            val classesDir = mainSourceSet.java.outputDir
+            val resourceDir = mainSourceSet.output.resourcesDir
+            files + allArtifacts.files + classesDir + resourceDir
+        }
+    }
+
     @TaskAction fun compTeaVM() {
         val tool = TeaVMTool()
         val project = project
@@ -58,7 +100,7 @@ open class TeaVMTask : DefaultTask() {
             throw TeaVMException("mainClass not specified!")
         }
 
-        fun addSrc(f: File) {
+        for (f in sourceFiles) {
             if (f.isFile) {
                 if (f.absolutePath.endsWith(".jar")) {
                     tool.addSourceFileProvider(JarSourceFileProvider(f))
@@ -70,21 +112,6 @@ open class TeaVMTask : DefaultTask() {
             }
 
         }
-
-
-        val convention = project.convention.getPlugin(JavaPluginConvention::class.java)
-
-        convention
-                .sourceSets
-                .getByName(SourceSet.MAIN_SOURCE_SET_NAME)
-                .allSource
-                .srcDirs.forEach(::addSrc)
-
-        project
-                .configurations
-                .getByName("teavmsources")
-                .files
-                .forEach(::addSrc)
 
         val cacheDirectory = File(project.buildDir, "teavm-cache")
         cacheDirectory.mkdirs()
@@ -112,16 +139,7 @@ open class TeaVMTask : DefaultTask() {
 
     private fun prepareClassLoader(): URLClassLoader {
         try {
-            val urls = project.configurations.getByName("runtime").run {
-                val dependencies = files.map { it.toURI().toURL() }
-                val artifacts = allArtifacts.files.map { it.toURI().toURL() }
-                val mainSourceSet = project.convention.getPlugin(JavaPluginConvention::class.java)
-                    .sourceSets
-                    .getByName(SourceSet.MAIN_SOURCE_SET_NAME)
-                val classesDir = mainSourceSet.java.outputDir.toURI().toURL()
-                val resourceDir = mainSourceSet.output.resourcesDir.toURI().toURL()
-                dependencies + artifacts + classesDir + resourceDir
-            }
+            val urls = jarsAndClassDirectories.map { it.toURI().toURL() }
             gradleLog.info("Using classpath URLs: {}", urls)
 
             return URLClassLoader(urls.toTypedArray(), javaClass.classLoader)
