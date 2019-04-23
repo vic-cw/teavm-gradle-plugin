@@ -87,6 +87,7 @@ open class TeaVMTask : DefaultTask() {
         val cacheDirectory = File(project.buildDir, "teavm-cache")
         cacheDirectory.mkdirs()
         tool.cacheDirectory = cacheDirectory
+        tool.setIncremental(true)
         tool.runtime = runtime
         tool.isMinifying = minified
         tool.log = log
