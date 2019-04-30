@@ -6,3 +6,9 @@ build/
 .idea/
 *.iml
 
+# Eclipse ignores
+.project
+
+# Mac OS ignores
+.DS_Store
+
