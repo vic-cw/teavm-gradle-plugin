@@ -1,5 +1,3 @@
-[![](https://jitpack.io/v/com.edibleday/teavm-gradle-plugin.svg)](https://jitpack.io/#com.edibleday/teavm-gradle-plugin)
-
 About
 =====
 
@@ -14,18 +12,22 @@ Add repositories and classpath in build script:
 ```
 buildscript {
     repositories {
-        mavenCentral()
         maven { url "https://jitpack.io" }
     }
 
     dependencies {
-        classpath 'com.edibleday:teavm-gradle-plugin:VERSION'
+        classpath 'com.github.vic-cw:teavm-gradle-plugin:COMMIT_HASH'
     }
 }
 ```
-Replace VERSION with actual version of plugin. See [releases](https://github.com/edibleday/teavm-gradle-plugin/releases) for version list.
+Replace COMMIT_HASH with actual short commit hash of desired version. See [Jitpack](https://jitpack.io/) for explanations.
 
-You can also use git commit hash as version. Check [JitPack](https://jitpack.io/#com.edibleday/teavm-gradle-plugin) for list of hashes and build status.
+Example: `classpath 'com.github.vic-cw:teavm-gradle-plugin:51ba430'`
+
+---
+Note: It is discouraged to use <strike>`master-SNAPSHOT`</strike>, since this tool and TeaVM are still in 0.x versions, which means any commit can introduce a breaking change.
+
+---
 
 Apply plugin to project:
 ```
