@@ -8,6 +8,7 @@ Quick Start
 ```
 buildscript {
     repositories {
+        mavenCentral()
         maven { url "https://jitpack.io" }
     }
 
