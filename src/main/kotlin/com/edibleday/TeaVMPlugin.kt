@@ -31,6 +31,8 @@ class TeaVMPlugin : Plugin<Project> {
 
         project.configurations.create("teavmsources")
 
+        project.repositories.mavenCentral()
+
         project.dependencies.let {
             it.add("compile", "org.teavm:teavm-classlib:$version")
             it.add("compile", "org.teavm:teavm-jso:$version")

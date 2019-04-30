@@ -28,13 +28,6 @@ Example: `classpath 'com.github.vic-cw:teavm-gradle-plugin:51ba430'`
 apply plugin: 'com.edibleday.teavm'
 ```
 
-Add repositories for TeaVM dependencies:
-```
-repositories {
-    mavenCentral()
-}
-```
-
 Set compilation options:
 ```
 teavmc {
