@@ -79,3 +79,14 @@ dependencies {
     teavmsources "com.test:test:1.0.0:sources"
 }
 ```
+
+Impact of plugin
+================
+
+Applying plugin has the following impact:
+
+- Adds `teavmc` task to project
+- Adds `teavmsources` configuration to project
+- Adds several TeaVM artifacts as `compile` dependencies
+- Adds `mavenCentral` as repository
+- Adds `java` plugin to project
