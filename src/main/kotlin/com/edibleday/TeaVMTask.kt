@@ -38,7 +38,6 @@ open class TeaVMTask : DefaultTask() {
     var mainClass: String = ""
     var installDirectory: String = File(project.buildDir, "teavm").absolutePath
     var targetFileName: String = "app.js"
-    var mainPageIncluded: Boolean = true
     var copySources: Boolean = false
     var generateSourceMap: Boolean = false
     var minified: Boolean = true
