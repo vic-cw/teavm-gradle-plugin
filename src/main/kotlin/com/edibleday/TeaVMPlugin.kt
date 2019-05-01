@@ -37,6 +37,7 @@ class TeaVMPlugin : Plugin<Project> {
             it.add("compile", "org.teavm:teavm-classlib:$version")
             it.add("compile", "org.teavm:teavm-jso:$version")
             it.add("compile", "org.teavm:teavm-jso-apis:$version")
+            it.add("compile", "org.teavm:teavm-metaprogramming-impl:$version")
             it.add("teavmsources", "org.teavm:teavm-platform:$version:sources")
             it.add("teavmsources", "org.teavm:teavm-classlib:$version:sources")
             it.add("teavmsources", "org.teavm:teavm-jso:$version:sources")
