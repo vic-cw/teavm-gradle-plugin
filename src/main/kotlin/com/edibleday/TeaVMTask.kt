@@ -94,7 +94,7 @@ open class TeaVMTask : DefaultTask() {
         tool.targetDirectory = File(installDirectory)
         tool.targetFileName = targetFileName
 
-        if (mainClass != "") {
+        if (mainClass.isNotBlank()) {
             tool.mainClass = mainClass
         } else {
             throw TeaVMException("mainClass not specified!")
@@ -124,16 +124,10 @@ open class TeaVMTask : DefaultTask() {
         tool.isSourceMapsFileGenerated = generateSourceMap
 
         val classLoader = prepareClassLoader()
-        try {
-            tool.classLoader = classLoader
+        classLoader.use {
+            tool.classLoader = it
             tool.generate()
-        } finally {
-            try {
-                classLoader.close()
-            } catch (ignored: IOException) {
-            }
         }
-
     }
 
 
