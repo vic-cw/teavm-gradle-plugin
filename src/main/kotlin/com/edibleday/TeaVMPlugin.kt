@@ -15,15 +15,21 @@
  */
 package com.edibleday
 
+import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
+
+const val TASK_NAME = "teavmc"
 
 class TeaVMPlugin : Plugin<Project> {
 
     val version = "0.5.1"
 
     override fun apply(project: Project) {
+
+        val extension = project.extensions.create(
+            TASK_NAME,
+            TeaVMPluginExtension::class.java)
 
         project.apply(mapOf(
                 "plugin" to "java"
@@ -45,14 +51,32 @@ class TeaVMPlugin : Plugin<Project> {
         }
 
 
-        project.task(mapOf(
-                Task.TASK_TYPE to TeaVMTask::class.java,
-                Task.TASK_DEPENDS_ON to "classes",
-                Task.TASK_DESCRIPTION to "TeaVM Compile",
-                Task.TASK_GROUP to "build"
-        ), "teavmc");
+        val task = project.tasks.create(TASK_NAME,
+            TeaVMTask::class.java,
+            Action {
+                task: TeaVMTask ->
+                    task.dependsOn("classes")
+                    task.description = "TeaVM Compile"
+                    task.group = "build"
+            })
 
+        project.afterEvaluate {
 
+            if (extension.flavourVersion != null) {
+                project.dependencies.let {
+                    it.add("compile", "org.teavm.flavour:teavm-flavour-widgets:${extension.flavourVersion}")
+                    it.add("compile", "org.teavm.flavour:teavm-flavour-rest:${extension.flavourVersion}")
+                }
+            }
+
+            task.mainClass = extension.mainClass ?: task.mainClass
+            task.installDirectory = extension.installDirectory ?: task.installDirectory
+            task.targetFileName = extension.targetFileName ?: task.targetFileName
+            task.copySources = extension.copySources ?: task.copySources
+            task.generateSourceMap = extension.generateSourceMap ?: task.generateSourceMap
+            task.minified = extension.minified ?: task.minified
+            task.runtime = extension.runtime ?: task.runtime
+        }
     }
 
 }

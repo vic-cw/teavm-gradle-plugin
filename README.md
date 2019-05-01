@@ -37,6 +37,10 @@ teavmc {
 
     // Optional configuration block
 
+    /* Add Flavour as dependency by specifying a Flavour version, */
+    /* for example "0.1.0"                                        */
+    flavourVersion = ""
+
     /* Where to put final web app */
     installDirectory "${project.buildDir}/teavm"
 
@@ -90,3 +94,10 @@ Applying plugin has the following impact:
 - Adds several TeaVM artifacts as `compile` dependencies
 - Adds `mavenCentral` as repository
 - Adds `java` plugin to project
+
+Note on versions
+================
+
+When choosing a Flavour version, make sure that it be compatible with the
+TeaVM version that this plugin uses.
+
