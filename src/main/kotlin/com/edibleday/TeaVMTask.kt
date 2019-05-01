@@ -127,6 +127,9 @@ open class TeaVMTask : DefaultTask() {
         classLoader.use {
             tool.classLoader = it
             tool.generate()
+            if (!tool.getProblemProvider().getSevereProblems().isEmpty()) {
+                throw GradleException("TeaVM compilation error")
+            }
         }
     }
 
